@@ -2,6 +2,8 @@
 
 # Functions
 
+version="1"
+
 # Function to print the header
 function print_header() {
     
@@ -39,12 +41,6 @@ function hex_to_ascii_func() {
         
     done < "assets/Hex_To_ASCII_Dict.txt"
 
-    # Print line address starter
-
-    address=0
-
-    printf "XX:"
-
     # Individual characters
     # Get the first argument, define it as local variable hex_string
     local hex_string="$1"
@@ -77,6 +73,7 @@ function interpret_line(){
     local line=$1
     # Get the substring of the line from the 3rd character
     local short_line="${line:3}"
+
     # Call the hex_to_ascii_func with the short_line
     hex_to_ascii_func "$short_line"
 }
@@ -85,6 +82,8 @@ function interpret_file(){
 
     # Print the header
     print_header
+
+    local address=0
 
     while IFS= read -r line; do
         # Get the first two characters of the line
@@ -95,10 +94,30 @@ function interpret_file(){
             # Skip the line and continue with the next iteration
             continue
         fi
+        # Check if the first two characters are empty
         if [[ "$first_two" == "" ]]; then
             # Skip the line and continue with the next iteration
             break
         fi
+
+        # Print line address starter
+        # Convert the address to a 2-digit hexadecimal number
+        
+        hex_address=$(printf "%02X" $address)
+
+        # Prepends a 0 if the hex address is only 2 characters long
+        if [ ${#hex_address} -eq 2 ]; then
+            hex_address="0"$hex_address
+        fi
+
+        # Get the first two characters of the hex address
+        hex_address="${hex_address:0:2}"
+
+        # Print the hex address
+        printf "%s:" "$hex_address"
+
+        # Increment the address by 16
+        (( address+=16 ))
 
         # Call the interpret_line function with the line, and pass the output to cat
         interpret_line "$line" | cat
@@ -112,11 +131,35 @@ file=$1
 
 # Main
 
-pwd
-
+# Start of script
 printf "Script execution started.\n"
 
-# This is a basic shell script
+case "$1" in
+    -h|-H|-\?|--help)
+        printf "Usage: ./p436.sh <file_path>\n"
+        printf "Converts a disk image file (.txt) to ASCII.\n"
+        printf "Options:\n"
+        printf "  -h, -H, -?, --help : Display help\n"
+        printf "  -v, -V, --version : Display version\n"
+        exit 1
+        ;;
+    -v|--version|-V)
+        printf "Version: %s\n" "$version"
+        exit 1
+        ;;
+esac
+
+# Check if the file path is empty
+if [ "$1" == "" ]; then
+    printf "Please provide a file path as an argument.\n"
+    exit 1
+fi
+
+# Check if the file exists
+if [ ! -f "$file" ]; then
+    printf "File not found.\n"
+    exit 1
+fi
 
 interpret_file < "$file"
 
