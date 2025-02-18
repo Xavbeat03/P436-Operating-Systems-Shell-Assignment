@@ -49,8 +49,11 @@ function hex_to_ascii_func() {
     # Get the length of the hex string
     local size=${#hex_string}
 
+    # Works on the first character
+    echo -n "${hex_to_ascii_dict['0'${hex_string:0:1}]} "
+
     # Convert each pair of characters from hex to ascii and print them one by one
-    for (( i = 0; i < size; i += 2 )); do
+    for (( i = 1; i < size-1; i += 2 )); do
         # Get the substring of the hex string from i to i+2
         hex_pair="${hex_string:i:2}"
         # Print the corresponding ASCII character from the dictionary
@@ -65,6 +68,10 @@ function hex_to_ascii_func() {
         fi
 
     done
+
+    # Works on the last character
+    echo -n "${hex_to_ascii_dict['0'${hex_string:$size-1:1}]}"
+    
     echo
 }
 
