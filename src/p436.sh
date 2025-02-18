@@ -3,8 +3,6 @@
 
 # Functions
 
-version="1"
-
 # Function to print the header
 function print_header() {
     
@@ -69,8 +67,7 @@ function hex_to_ascii_func() {
 
     done
 
-    # Works on the last character
-    echo -n "${hex_to_ascii_dict['0'${hex_string:$size-1:1}]}"
+    echo -n "${hex_to_ascii_dict["0${hex_string:$size-1:1}"]}"
     
     echo
 }
@@ -86,6 +83,7 @@ function interpret_line(){
     hex_to_ascii_func "$short_line"
 }
 
+# Interpret the file
 function interpret_file(){
 
     # Print the header
@@ -132,44 +130,182 @@ function interpret_file(){
     done
 }
 
+# Interprets the printed file system from the disk image
+function interpret_file_system(){
+    local file=$1
+    local address=0 # Address of the current line
+    local line_num=0 # Line number of the current line
+    local final_value_length=4 # Each stored character is at most 4 characters long in the passed file system
+
+    line_num=$((line_num+2)) # Skip the first two lines
+
+    while IFS= read -r line; do
+
+        if [ $line_num -eq 0 ] && [ $line_num -eq 1]; then
+            line_num=$((line_num+1))
+            continue
+        fi
+        
+        printf "Line %d: %s\n" "$line_num" "$line"
+
+
+        line_num=$((line_num+1))
+    done < "$1"
+
+
+
+}
+
+# Function to display help
+function help(){
+    printf "Usage: ./p436.sh <file_path>\n"
+    printf "Converts a disk image file (.txt) to ASCII.\n"
+    printf "Options:\n"
+    printf "  -h, -H, -?, --help : Display help\n"
+    printf "  -v, -V, --version : Display version\n"
+    printf "  -f <file_path>, --file <file_path>: Specify the file path\n"
+}
+
+# Function to display version
+function version(){
+    printf "Version: %s\n" "$version"
+}
+
+function file_check(){
+    # Check if the file exists
+    if [ ! -f "$file" ]; then
+        printf "File not found.\n"
+        exit 1
+    fi
+
+    case "$file" in
+        *.txt) # File is a text file
+            printf "File is a text file.\n"
+            ;;
+        *) # File is not a text file
+            printf "File is not a text file. Exiting.\n"
+            exit 1
+            ;;
+    esac
+}
+
+# Interprets the file and prints out the internal directory of the formatted disk
+function directory(){
+    printf "Interpreting the file...\n"
+    local f # Interpreted File output for reading
+    mkdir "../temp"
+    interpret_file < "$file" > "../temp/interpreted_file.txt"
+
+    f="../temp/interpreted_file.txt"
+
+    interpret_file_system "$f"
+
+    rm "../temp/interpreted_file.txt"
+    rmdir "../temp"
+    
+}
+
+# Checks if the disk file is malformed
+function malformed_check(){
+    local i=0
+    while IFS= read -r line; do
+        # Get the first two characters of the line
+        first_two="${line:0:2}"
+        first_data="${line:3:4}"
+
+        # Check if the first two characters are "XX"
+        if [[ "$first_two" == "XX" ]]; then
+            # Skip the line and continue with the next iteration
+            continue
+        fi
+        # Check if the first two characters are empty
+        if [[ "$first_two" == "" ]]; then
+            # Skip the line and continue with the next iteration
+            break
+        fi
+
+        if [ "$first_data" == "2" ]; then
+            printf "Malformed disk file.\n"
+            printf "Damaged data block.\n"
+            exit 1
+        fi
+
+        # Check if the line is not 64 characters long
+        if [ ${#line} -ne 67 ] && [ $i != 0 ]; then
+            printf "Malformed disk file.\n"
+            printf "Line %d is not 64 characters long.\n" "$i"
+            exit 1
+        fi
+
+        i=$((i+1))
+    done < "$file"
+}
+
 # Variables
 
-# File path as an argument
-file=$1
+version="1"
 
 # Main
 
 # Start of script
 printf "Script execution started.\n"
 
-case "$1" in
-    -h|-H|-\?|--help)
-        printf "Usage: ./p436.sh <file_path>\n"
-        printf "Converts a disk image file (.txt) to ASCII.\n"
-        printf "Options:\n"
-        printf "  -h, -H, -?, --help : Display help\n"
-        printf "  -v, -V, --version : Display version\n"
+case "$#" in
+    0) # No arguments
+        help
+
         exit 1
         ;;
-    -v|--version|-V)
-        printf "Version: %s\n" "$version"
+    1) # Continue with the script
+        case "$1" in
+            -h|-H|-\?|--help|"") # Display help
+                help
+
+                exit 1
+                ;;
+            -v|--version|-V) # Display version
+                version
+
+                exit 1
+                ;;
+            -f|--file) # File path not specified
+                printf "File path not specified.\n"
+                exit 1
+                ;;
+            *) # Continue with the script
+        esac
+        ;;
+    2) # Continue with the script
+        case "$1" in
+            -f|--file) # File path specified
+                file=$2 # File path
+                file_check
+                malformed_check
+
+                directory
+                ;;
+
+            --interpret-and-print) # Interpret and print the disk file
+                file=$2 # File path
+
+                file_check
+                malformed_check
+                interpret_file < "$file"
+
+                exit 1
+                ;;
+
+            *) # Invalid option
+                printf "Invalid option.\n"
+                exit 1
+                ;;
+        esac
+        ;;
+    *) # More than one argument
+        printf "Too many arguments.\n"
         exit 1
         ;;
 esac
-
-# Check if the file path is empty
-if [ "$1" == "" ]; then
-    printf "Please provide a file path as an argument.\n"
-    exit 1
-fi
-
-# Check if the file exists
-if [ ! -f "$file" ]; then
-    printf "File not found.\n"
-    exit 1
-fi
-
-interpret_file < "$file"
 
 # End of script
 printf "\nScript execution completed.\n"
