@@ -137,16 +137,29 @@ function interpret_file_system(){
     local line_num=0 # Line number of the current line
     local final_value_length=4 # Each stored character is at most 4 characters long in the passed file system
 
-    line_num=$((line_num+2)) # Skip the first two lines
-
     while IFS= read -r line; do
 
-        if [ $line_num -eq 0 ] && [ $line_num -eq 1]; then
+        if (( line_num < 2 )); then
             line_num=$((line_num+1))
             continue
         fi
         
-        printf "Line %d: %s\n" "$line_num" "$line"
+        local short_line # Shortened line for interpretation
+        short_line="${line:3}" # Get the substring of the line from the 3rd character
+
+        if (( line_num >= 2 )); then
+            printf "%s\n" "$short_line"
+        fi
+        
+        for (( i=-4; i<${#short_line}; i+=$final_value_length )); do
+            char="${short_line:$i:$((i+4))}"
+            printf "Char %d: %s\n" "$i" "$char"
+        done
+
+
+
+
+
 
 
         line_num=$((line_num+1))
@@ -193,13 +206,16 @@ function file_check(){
 function directory(){
     printf "Interpreting the file...\n"
     local f # Interpreted File output for reading
+    # Create a temporary directory and file
     mkdir "../temp"
     interpret_file < "$file" > "../temp/interpreted_file.txt"
 
+    # Work on the interpreted file
     f="../temp/interpreted_file.txt"
 
     interpret_file_system "$f"
 
+    # Remove temporary file
     rm "../temp/interpreted_file.txt"
     rmdir "../temp"
     
