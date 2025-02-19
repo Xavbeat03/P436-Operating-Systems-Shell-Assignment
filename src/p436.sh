@@ -146,26 +146,86 @@ function interpret_file_system(){
         
         local short_line # Shortened line for interpretation
         short_line="${line:3}" # Get the substring of the line from the 3rd character
+        local doContinue=false # Continue flag
+        
+        for (( i=0; i<${#short_line}; i+=final_value_length )); do
+            local section_num=$((i / final_value_length))
+            local section="${short_line:$i:$final_value_length}" # Grabs the a section of the string, representing a character
+            local important_headers=("NUL " "ETX " "EOT ")
+
+            # Check the first value of the section (The first character)
+            if [ "$section_num" -eq 0 ]; then
+                # Check if the section is not an important header (NUL, ETX, EOT)
+                if [[ ! " ${important_headers[*]} " =~ ${section} ]]; then
+                    doContinue=true # Continue flag
+                    break
+                fi
+            fi
+            
+        done
+
+        if [ "$doContinue" == true ]; then
+            continue
+        fi
 
         if (( line_num >= 2 )); then
             printf "%s\n" "$short_line"
         fi
-        
-        for (( i=-4; i<${#short_line}; i+=$final_value_length )); do
-            char="${short_line:$i:$((i+4))}"
-            printf "Char %d: %s\n" "$i" "$char"
-        done
-
-
-
-
-
 
 
         line_num=$((line_num+1))
-    done < "$1"
+    done < "$file" > "./temp/interpreted_file_system.txt" # Write the interpreted file system to a temporary file
 
+    # Print the interpreted file system
 
+    local last_line
+    last_line=$(tail -n 1 "./temp/interpreted_file_system.txt")
+
+    printf "Interpreted File System:\n"
+    while IFS= read -r line; do
+        local first_char="${line:0:4}" # Get the first character of the line
+        local word
+        local is_last_line
+        
+        # Check if the line is the last line
+        if [ "$line" == "$last_line" ]; then
+            is_last_line=true
+        else
+            is_last_line=false
+        fi
+        
+        case $first_char in
+            "NUL ") # Directory
+                for (( i=28; i<${#line}; i+=4 )); do
+                    if [[ "${line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+                        break
+                    fi
+                    printf "%s " "${line:$i:4}"
+                done > word
+                word=$(< word)
+                printf "%s\n" "${word// /}" # Prints and removes spaces
+                ;;
+            "ETX ") # File
+                for (( i=20; i<${#line}; i+=4 )); do
+                    if [[ "${line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+                        break
+                    fi
+                    printf "%s " "${line:$i:4}"
+                done > word
+                word=$(< word)
+                # Check if the line is the last line
+                if [ "$is_last_line" == true ]; then
+                    printf " └─🠶 %s\n" "${word// /}" # Prints and removes spaces
+                else
+                    printf " ├─🠶 %s\n" "${word// /}"
+                fi
+                ;;
+        esac
+
+    done < "./temp/interpreted_file_system.txt"
+
+    # Remove the interpreted file system temporary file
+    rm "./temp/interpreted_file_system.txt"
 
 }
 
@@ -207,17 +267,17 @@ function directory(){
     printf "Interpreting the file...\n"
     local f # Interpreted File output for reading
     # Create a temporary directory and file
-    mkdir "../temp"
-    interpret_file < "$file" > "../temp/interpreted_file.txt"
+    mkdir "./temp"
+    interpret_file < "$file" > "./temp/interpreted_file.txt"
 
     # Work on the interpreted file
-    f="../temp/interpreted_file.txt"
+    f="./temp/interpreted_file.txt"
 
     interpret_file_system "$f"
 
     # Remove temporary file
-    rm "../temp/interpreted_file.txt"
-    rmdir "../temp"
+    rm "./temp/interpreted_file.txt"
+    rmdir "./temp"
     
 }
 
