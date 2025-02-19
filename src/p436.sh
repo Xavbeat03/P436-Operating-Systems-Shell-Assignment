@@ -181,10 +181,11 @@ function interpret_file_system(){
     local last_line
     last_line=$(tail -n 1 "./temp/interpreted_file_system.txt")
 
-    printf "Interpreted File System:\n"
+    printf "\nInterpreted File System:\n\n"
     while IFS= read -r line; do
         local first_char="${line:0:4}" # Get the first character of the line
         local word
+        local temp_word_file_path="./temp/word"
         local is_last_line
         
         # Check if the line is the last line
@@ -201,9 +202,13 @@ function interpret_file_system(){
                         break
                     fi
                     printf "%s " "${line:$i:4}"
-                done > word
-                word=$(< word)
+                done > "$temp_word_file_path"
+                word=$(< "$temp_word_file_path")
+                
                 printf "%s\n" "${word// /}" # Prints and removes spaces
+                
+                rm "$temp_word_file_path"
+
                 ;;
             "ETX ") # File
                 for (( i=20; i<${#line}; i+=4 )); do
@@ -211,16 +216,20 @@ function interpret_file_system(){
                         break
                     fi
                     printf "%s " "${line:$i:4}"
-                done > word
-                word=$(< word)
+                done > "$temp_word_file_path"
+                word=$(< "$temp_word_file_path")
                 # Check if the line is the last line
                 if [ "$is_last_line" == true ]; then
                     printf " └─🠶 %s\n" "${word// /}" # Prints and removes spaces
                 else
                     printf " ├─🠶 %s\n" "${word// /}"
                 fi
+                
+                rm "$temp_word_file_path"
+
                 ;;
         esac
+        
 
     done < "./temp/interpreted_file_system.txt"
 
@@ -237,6 +246,7 @@ function help(){
     printf "  -h, -H, -?, --help : Display help\n"
     printf "  -v, -V, --version : Display version\n"
     printf "  -f <file_path>, --file <file_path>: Specify the file path\n"
+    printf "  -dir -f <file_path>: Interpret the file system\n"
 }
 
 # Function to display version
@@ -248,7 +258,7 @@ function file_check(){
     # Check if the file exists
     if [ ! -f "$file" ]; then
         printf "File not found.\n"
-        exit 1
+        exit_and_clean
     fi
 
     case "$file" in
@@ -257,7 +267,7 @@ function file_check(){
             ;;
         *) # File is not a text file
             printf "File is not a text file. Exiting.\n"
-            exit 1
+            exit_and_clean
             ;;
     esac
 }
@@ -303,86 +313,130 @@ function malformed_check(){
         if [ "$first_data" == "2" ]; then
             printf "Malformed disk file.\n"
             printf "Damaged data block.\n"
-            exit 1
+            exit_and_clean
         fi
 
         # Check if the line is not 64 characters long
         if [ ${#line} -ne 67 ] && [ $i != 0 ]; then
             printf "Malformed disk file.\n"
             printf "Line %d is not 64 characters long.\n" "$i"
-            exit 1
+            exit_and_clean
         fi
 
         i=$((i+1))
     done < "$file"
 }
 
+# Exit and clean up
+function exit_and_clean(){
+    if [ -f "./temp_input.txt" ]; then
+        rm "./temp_input.txt"
+    fi
+    printf "\nScript execution completed.\n"
+    exit 1
+}
+
 # Variables
 
 version="1"
 
+# Check if the input is from a pipe
+if [ ! -t 0 ]; then
+    cat > ./temp_input.txt
+    file="./temp_input.txt"
+fi
+
 # Main
+
+# Main function
+main(){
+    case "$#" in
+        0) # No arguments
+            if [ -s "./temp_input.txt" ]; then
+                main -f "./temp_input.txt"
+            else
+                help
+            fi
+            ;;
+        1) # Continue with the script
+            case "$1" in
+                -h|-H|-\?|--help|"") # Display help
+                    help
+
+                    ;;
+                -v|--version|-V) # Display version
+                    version
+
+                    ;;
+                -f|--file) # File path not specified
+                    printf "File path not specified.\n"
+                    ;;
+                *) # Invalid option
+                    printf "Invalid option.\n"
+                    exit_and_clean
+                    ;;
+            esac
+            ;;
+        2) # Continue with the script
+            case "$1" in
+                -f|--file) # File path specified
+                    file=$2 # File path
+                    file_check
+                    malformed_check
+
+                    directory
+                    ;;
+
+                --interpret-and-print) # Interpret and print the disk file
+                    file=$2 # File path
+
+                    file_check
+                    malformed_check
+                    interpret_file < "$file"
+                    ;;
+
+                *) # Invalid option
+                    printf "Invalid option.\n"
+                    exit_and_clean
+                    ;;
+            esac
+            ;;
+        3) 
+            case "$1" in
+                -dir)
+                    case "$2" in
+                        -f|--file) # File path specified
+                            file=$3 # File path
+                            file_check
+                            malformed_check
+
+                            directory
+                            ;;
+                        *) # File path not specified
+                            printf "File path not specified.\n"
+                            ;;
+                    esac
+                    ;;
+                *) # Invalid option
+                    printf "Invalid option.\n"
+                    exit_and_clean
+                    ;;
+            esac
+            ;;
+        *) # More than one argument
+            printf "Too many arguments.\n"
+            exit_and_clean
+            ;;
+    esac
+
+    
+
+}
 
 # Start of script
 printf "Script execution started.\n"
 
-case "$#" in
-    0) # No arguments
-        help
-
-        exit 1
-        ;;
-    1) # Continue with the script
-        case "$1" in
-            -h|-H|-\?|--help|"") # Display help
-                help
-
-                exit 1
-                ;;
-            -v|--version|-V) # Display version
-                version
-
-                exit 1
-                ;;
-            -f|--file) # File path not specified
-                printf "File path not specified.\n"
-                exit 1
-                ;;
-            *) # Continue with the script
-        esac
-        ;;
-    2) # Continue with the script
-        case "$1" in
-            -f|--file) # File path specified
-                file=$2 # File path
-                file_check
-                malformed_check
-
-                directory
-                ;;
-
-            --interpret-and-print) # Interpret and print the disk file
-                file=$2 # File path
-
-                file_check
-                malformed_check
-                interpret_file < "$file"
-
-                exit 1
-                ;;
-
-            *) # Invalid option
-                printf "Invalid option.\n"
-                exit 1
-                ;;
-        esac
-        ;;
-    *) # More than one argument
-        printf "Too many arguments.\n"
-        exit 1
-        ;;
-esac
+main "$@"
 
 # End of script
-printf "\nScript execution completed.\n"
-
+exit_and_clean
