@@ -612,7 +612,7 @@ function help(){
     printf "  -v, -V, --version : Display version\n"
     printf "  -f <file_path>, --file <file_path>: Specify the file path\n"
     printf "  -dir -f <file_path>: Interpret the file system\n"
-    printf "  <disk_name> <sector_count> <cluster_size>: Create a new blank disk\n"
+    printf "  <disk_name> <sector_count> <cluster_size>: Create a new blank disk at <disk_name>.txt\n"
 }
 
 # Function to display version
