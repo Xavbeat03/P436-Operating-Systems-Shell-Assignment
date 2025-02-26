@@ -548,8 +548,15 @@ function create_blank_disk(){
     done
     printf "\n" 
 
-    printf "00:0010000"
+   
 
+    # Create the disk
+
+    # Add constant disk data for the first sector
+    printf "00:0010000"
+    
+
+    # Disk name exceeds reasonable length and goes over the cluster size
     if [ ${#disk_name} -gt $(( cluster_size - 10 )) ]; then
         printf " Disk name too long\n" >> stdout
         exit_and_clean
@@ -557,32 +564,43 @@ function create_blank_disk(){
 
     local disk_name_length=${#disk_name}
 
-    # Convert the disk name to hex using the ASCII to hex dictionary
-    declare -A ascii_to_hex_dict
-
-    # Check if the dictionary file exists, if not create it
-    create_ascii_to_hex_dict
-
-    # Read the ASCII to hex dictionary file line by line
-    while IFS=": " read -r ascii hex; do
-        # Assign the hex value to the ASCII key in the dictionary
-        ascii_to_hex_dict["$ascii"]="$hex"
-    done < "assets/ASCII_To_Hex_Dict.txt"
-
-    # Convert each character of the disk name to hex and print it
-    for (( i = 0; i < disk_name_length; i++ )); do
-        char="${disk_name:i:1}"
-        printf "%s" "${ascii_to_hex_dict[$char]}"
+    # Convert disk name to hex
+    for (( i=0; i<disk_name_length; i++ )); do
+        # Convert the character to hex
+        printf "%02X" "'${disk_name:$i:1}"
     done
-
     
 
-    if [ "$cluster_size" -lt $(( disk_name_length + 7 )) ]; then
-        for (( i=0; i< $(( "cluster_size" - disk_name_length - 7 )); i++ )); do
+    # Add right 0 padding
+    if [ "$cluster_size" -gt $(( disk_name_length + 7 )) ]; then
+        # Adjust for characters already added
+        for (( i=0; i< $(( cluster_size - (disk_name_length * 2) - 7 )); i++ )); do
             printf "0"
         done
+        printf "\n"
     fi
 
+    # Add the rest of the sectors
+    for (( i=1; i < sector_count; i++ )); do
+        # Print the sector number
+        printf "%02X:" $i
+        # Sector is empty
+        printf "1";
+        # Sector pointer
+        if [ $i -lt $(( sector_count - 1 )) ]; then
+            # Points to the next sector
+            printf "%02X" $(( i + 1 ))
+        else
+            # Last sector points to nothing
+            printf "00"
+        fi
+        # Add right 0 padding
+        for (( j=0; j< cluster_size - 3; j++ )); do
+            printf "0"
+        done
+        # New line
+        printf "\n"
+    done
 }
 
 # Function to display help
@@ -594,6 +612,7 @@ function help(){
     printf "  -v, -V, --version : Display version\n"
     printf "  -f <file_path>, --file <file_path>: Specify the file path\n"
     printf "  -dir -f <file_path>: Interpret the file system\n"
+    printf "  <disk_name> <sector_count> <cluster_size>: Create a new blank disk\n"
 }
 
 # Function to display version
