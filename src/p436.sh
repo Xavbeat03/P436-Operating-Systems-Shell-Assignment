@@ -24,11 +24,286 @@ function format_and_print_line() {
     done
     echo
 }
+
+
+# Function to create the hex to ASCII dictionary
+function create_hex_to_ascii_dict_worker(){
+    
+    printf "00: NUL \n"
+    printf "01: SOH \n"
+    printf "02: STX \n"
+    printf "03: ETX \n"
+    printf "04: EOT \n"
+    printf "05: ENQ \n"
+    printf "06: ACK \n"
+    printf "07: BEL \n"
+    printf "08: BS  \n"
+    printf "09: HT  \n"
+    printf "0A: LF  \n"
+    printf "0B: VT  \n"
+    printf "0C: FF  \n"
+    printf "0D: CR  \n"
+    printf "0E: SO  \n"
+    printf "0F: SI  \n"
+    printf "10: DLE \n"
+    printf "11: DC1 \n"
+    printf "12: DC2 \n"
+    printf "13: DC3 \n"
+    printf "14: DC4 \n"
+    printf "15: NAK \n"
+    printf "16: SYN \n"
+    printf "17: ETB \n"
+    printf "18: CAN \n"
+    printf "19: EM  \n"
+    printf "1A: SUB \n"
+    printf "1B: ESC \n"
+    printf "1C: FS  \n"
+    printf "1D: GS  \n"
+    printf "1E: RS  \n"
+    printf "1F: US  \n"
+    printf "20: SP  \n"
+    printf "21: !   \n"
+    printf "22: \"   \n"
+    printf "23: #   \n"
+    printf "24: $   \n"
+    printf "25: %%   \n"
+    printf "26: &   \n"
+    printf "27: \'   \n"
+    printf "28: (   \n"
+    printf "29: )   \n"
+    printf "2A: *   \n"
+    printf "2B: +   \n"
+    printf "2C: ,   \n"
+    printf "2D: -   \n"
+    printf "2E: .   \n"
+    printf "2F: /   \n"
+    printf "30: 0   \n"
+    printf "31: 1   \n"
+    printf "32: 2   \n"
+    printf "33: 3   \n"
+    printf "34: 4   \n"
+    printf "35: 5   \n"
+    printf "36: 6   \n"
+    printf "37: 7   \n"
+    printf "38: 8   \n"
+    printf "39: 9   \n"
+    printf "3A: :   \n"
+    printf "3B: ;   \n"
+    printf "3C: <   \n"
+    printf "3D: =   \n"
+    printf "3E: >   \n"
+    printf "3F: ?   \n"
+    printf "40: @   \n"
+    printf "41: A   \n"
+    printf "42: B   \n"
+    printf "43: C   \n"
+    printf "44: D   \n"
+    printf "45: E   \n"
+    printf "46: F   \n"
+    printf "47: G   \n"
+    printf "48: H   \n"
+    printf "49: I   \n"
+    printf "4A: J   \n"
+    printf "4B: K   \n"
+    printf "4C: L   \n"
+    printf "4D: M   \n"
+    printf "4E: N   \n"
+    printf "4F: O   \n"
+    printf "50: P   \n"
+    printf "51: Q   \n"
+    printf "52: R   \n"
+    printf "53: S   \n"
+    printf "54: T   \n"
+    printf "55: U   \n"
+    printf "56: V   \n"
+    printf "57: W   \n"
+    printf "58: X   \n"
+    printf "59: Y   \n"
+    printf "5A: Z   \n"
+    printf "5B: [   \n"
+    printf "5C: \   \n"
+    printf "5D: ]   \n"
+    printf "5E: ^   \n"
+    printf "5F: _   \n"
+    printf "60: \`   \n"
+    printf "61: a   \n"
+    printf "62: b   \n"
+    printf "63: c   \n"
+    printf "64: d   \n"
+    printf "65: e   \n"
+    printf "66: f   \n"
+    printf "67: g   \n"
+    printf "68: h   \n"
+    printf "69: i   \n"
+    printf "6A: j   \n"
+    printf "6B: k   \n"
+    printf "6C: l   \n"
+    printf "6D: m   \n"
+    printf "6E: n   \n"
+    printf "6F: o   \n"
+    printf "70: p   \n"
+    printf "71: q   \n"
+    printf "72: r   \n"
+    printf "73: s   \n"
+    printf "74: t   \n"
+    printf "75: u   \n"
+    printf "76: v   \n"
+    printf "77: w   \n"
+    printf "78: x   \n"
+    printf "79: y   \n"
+    printf "7A: z   \n"
+    printf "7B: {   \n"
+    printf "7C: |   \n"
+    printf "7D: }   \n"
+    printf "7E: ~   \n"
+    printf "7F: DEL \n"
+}
+
+# Function to create the hex to ASCII dictionary
+function create_hex_to_ascii_dict(){
+
+
+    # Check if the assets directory exists
+    if [ ! -d "assets" ]; then
+        mkdir -p assets
+    fi
+
+    if [ -f "assets/Hex_To_ASCII_Dict.txt" ]; then
+        rm "assets/Hex_To_ASCII_Dict.txt"
+    fi
+
+    # Create the hex to ASCII dictionary file
+    create_hex_to_ascii_dict_worker > assets/Hex_To_ASCII_Dict.txt
+    
+    
+}
+
+# Function to create the ASCII to hex dictionary
+function create_ascii_to_hex_dict_worker(){
+    printf " : 20\n"
+    printf "!: 21\n"
+    printf "\": 22\n"
+    printf "#: 23\n"
+    printf "$: 24\n"
+    printf "%%: 25\n"
+    printf "&: 26\n"
+    printf "\': 27\n"
+    printf "(: 28\n"
+    printf "): 29\n"
+    printf "*: 2A\n"
+    printf "+: 2B\n"
+    printf ",: 2C\n"
+    printf "\-: 2D\n"
+    printf ".: 2E\n"
+    printf "/: 2F\n"
+    printf "0: 30\n"
+    printf "1: 31\n"
+    printf "2: 32\n"
+    printf "3: 33\n"
+    printf "4: 34\n"
+    printf "5: 35\n"
+    printf "6: 36\n"
+    printf "7: 37\n"
+    printf "8: 38\n"
+    printf "9: 39\n"
+    printf ":: 3A\n"
+    printf ";: 3B\n"
+    printf "<: 3C\n"
+    printf "=: 3D\n"
+    printf ">: 3E\n"
+    printf "?: 3F\n"
+    printf "@: 40\n"
+    printf "A: 41\n"
+    printf "B: 42\n"
+    printf "C: 43\n"
+    printf "D: 44\n"
+    printf "E: 45\n"
+    printf "F: 46\n"
+    printf "G: 47\n"
+    printf "H: 48\n"
+    printf "I: 49\n"
+    printf "J: 4A\n"
+    printf "K: 4B\n"
+    printf "L: 4C\n"
+    printf "M: 4D\n"
+    printf "N: 4E\n"
+    printf "O: 4F\n"
+    printf "P: 50\n"
+    printf "Q: 51\n"
+    printf "R: 52\n"
+    printf "S: 53\n"
+    printf "T: 54\n"
+    printf "U: 55\n"
+    printf "V: 56\n"
+    printf "W: 57\n"
+    printf "X: 58\n"
+    printf "Y: 59\n"
+    printf "Z: 5A\n"
+    printf "[: 5B\n"
+    printf "\: 5C\n"
+    printf "]: 5D\n"
+    printf "^: 5E\n"
+    printf "_: 5F\n"
+    printf "\`: 60\n"
+    printf "a: 61\n"
+    printf "b: 62\n"
+    printf "c: 63\n"
+    printf "d: 64\n"
+    printf "e: 65\n"
+    printf "f: 66\n"
+    printf "g: 67\n"
+    printf "h: 68\n"
+    printf "i: 69\n"
+    printf "j: 6A\n"
+    printf "k: 6B\n"
+    printf "l: 6C\n"
+    printf "m: 6D\n"
+    printf "n: 6E\n"
+    printf "o: 6F\n"
+    printf "p: 70\n"
+    printf "q: 71\n"
+    printf "r: 72\n"
+    printf "s: 73\n"
+    printf "t: 74\n"
+    printf "u: 75\n"
+    printf "v: 76\n"
+    printf "w: 77\n"
+    printf "x: 78\n"
+    printf "y: 79\n"
+    printf "z: 7A\n"
+    printf "{: 7B\n"
+    printf "|: 7C\n"
+    printf "}: 7D\n"
+    printf "~: 7E\n"
+    
+}
+
+# Function to create the ASCII to hex dictionary
+function create_ascii_to_hex_dict() {
+    # Check if the assets directory exists
+    if [ ! -d "assets" ]; then
+        mkdir -p assets
+    fi
+
+    if [ -f "assets/ASCII_To_Hex_Dict.txt" ]; then
+        rm "assets/ASCII_To_Hex_Dict.txt"
+    fi
+
+    # Create the ASCII to hex dictionary file
+    create_ascii_to_hex_dict_worker > assets/ASCII_To_Hex_Dict.txt
+
+}
+
 # Convert a hex string to ASCII
 function hex_to_ascii_func() {
     
+    
+
     # Load the hex to ASCII dictionary into an associative array
     declare -A hex_to_ascii_dict
+
+    # check if the dictionary file exists if not create it
+    create_hex_to_ascii_dict
 
     # Read the hex to ASCII dictionary file line by line
     # IFS=": " : set the input field separator to ": "
@@ -238,6 +513,78 @@ function interpret_file_system(){
 
 }
 
+# Function to create a blank disk, takes 3 arguments: disk name, sector count, and cluster size
+function create_blank_disk(){
+    # Get the arguments
+    local disk_name=$1
+    local sector_count=$2
+    local cluster_size=$3
+
+    # Create the disk file
+    touch "$disk_name.txt"
+
+    # Create the header
+    # line 1
+    printf "XX:                " 
+
+    for (( i=1; i<$(( cluster_size/16 )); i++ )); do
+        if [ ${#i} -eq 1 ]; then
+            printf "%X               " $i 
+        elif [ ${#i} -eq 2 ]; then
+            printf "%X              " $i 
+        else
+            printf "%X             " $i 
+        fi    
+    done
+    printf "\n" 
+
+
+    # line 2
+    printf "XX:" 
+    for (( i=0; i< cluster_size; i+=16 )); do
+        for (( j=0; j<16; j++ )); do
+            printf "%01X" $j 
+        done
+    done
+    printf "\n" 
+
+    printf "00:0010000"
+
+    if [ ${#disk_name} -gt $(( cluster_size - 10 )) ]; then
+        printf " Disk name too long\n" >> stdout
+        exit_and_clean
+    fi
+
+    local disk_name_length=${#disk_name}
+
+    # Convert the disk name to hex using the ASCII to hex dictionary
+    declare -A ascii_to_hex_dict
+
+    # Check if the dictionary file exists, if not create it
+    create_ascii_to_hex_dict
+
+    # Read the ASCII to hex dictionary file line by line
+    while IFS=": " read -r ascii hex; do
+        # Assign the hex value to the ASCII key in the dictionary
+        ascii_to_hex_dict["$ascii"]="$hex"
+    done < "assets/ASCII_To_Hex_Dict.txt"
+
+    # Convert each character of the disk name to hex and print it
+    for (( i = 0; i < disk_name_length; i++ )); do
+        char="${disk_name:i:1}"
+        printf "%s" "${ascii_to_hex_dict[$char]}"
+    done
+
+    
+
+    if [ "$cluster_size" -lt $(( disk_name_length + 7 )) ]; then
+        for (( i=0; i< $(( "cluster_size" - disk_name_length - 7 )); i++ )); do
+            printf "0"
+        done
+    fi
+
+}
+
 # Function to display help
 function help(){
     printf "Usage: ./p436.sh <file_path>\n"
@@ -316,10 +663,11 @@ function malformed_check(){
             exit_and_clean
         fi
 
+        # TODO: Need to change to checking if its modulus 16 equals 0
         # Check if the line is not 64 characters long
-        if [ ${#line} -ne 67 ] && [ $i != 0 ]; then
+        if [ $((  #line % 16  )) -ne 0 ] && [ $i != 0 ]; then
             printf "Malformed disk file.\n"
-            printf "Line %d is not 64 characters long.\n" "$i"
+            printf "Line %d is not a multiple of 16( >0 ) characters long.\n" "$i"
             exit_and_clean
         fi
 
@@ -417,9 +765,48 @@ main(){
                             ;;
                     esac
                     ;;
-                *) # Invalid option
+                -*|*.*) # Invalid option
                     printf "Invalid option.\n"
                     exit_and_clean
+                    ;;
+                *) # Create new blank disk or invalid option
+                    if [[ "$1" =~ ^[a-zA-Z0-9]+$ ]]; then
+                        if [[ "$2" =~ ^[0-9]+$ ]] && [[ "$3" =~ ^[0-9]+$ ]]; then
+                            printf "Creating a new blank disk...\n"
+
+                            # Check that sector count is a multiple of 16
+                            if [ "$2" -eq 0 ] || [ $(( $2 % 16 )) -ne 0 ]; then
+                                printf "sector count must be a multiple of 16.\n"
+                                exit_and_clean
+                            fi
+                            
+                            # Check that cluster size is a multiple of 16
+                            if [ "$3" -eq 0 ] || [ $(( $3 % 16 )) -ne 0 ]; then
+                                printf "cluster size must be a multiple of 16.\n"
+                                exit_and_clean
+                            fi
+
+                            # Print the disk name, sector count, and cluster size
+                            printf "Disk name: %s\n" "$1"
+                            printf "Sector Count: %s\n" "$2"
+                            printf "Cluster size: %s\n" "$3"
+
+                            # Create the new blank disk
+                            create_blank_disk "$1" "$2" "$3" >> "$1.txt"
+
+                            exit_and_clean
+                        else
+                            printf "Invalid option.\n"
+                            exit_and_clean
+                        fi
+
+
+
+                        exit_and_clean
+                    else
+                        printf "Invalid option.\n"
+                        exit_and_clean
+                    fi
                     ;;
             esac
             ;;

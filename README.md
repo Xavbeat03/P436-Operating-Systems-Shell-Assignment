@@ -58,31 +58,31 @@ Your program should also detect the following command line parameters:
 --------------------------------------------------------------
 
 ### Root Cluster (Root dir always starts at cluster 0, LL)
-Start LenNibbles Contents
+Start   LenNibbles  Contents
 
-00 01 cluster type
+00      01          cluster type
 
-01 02 pointer to linked list of available
+01      02          pointer to linked list of available
 
-03 02 pointer to linked list of bad clusters
+03      02          pointer to linked list of bad clusters
 
-05 02 pointer to linked list of file headers
+05      02          pointer to linked list of file headers
 
-07 XX volume name (end with null character)
+07      XX          volume name (end with null character)
 
 --------------------------------------------------------------
 
 ### File Header Cluster (self contained, no extension)
 
-Start LenNibbles Contents
+Start   LenNibbles  Contents
 
-00 01 cluster type
+00      01          cluster type
 
-01 02 next pointer to next file
+01      02          next pointer to next file
 
-03 02 next pointer to file data cluster (if necessary)
+03      02          next pointer to file data cluster (if necessary)
 
-05 XX file name (end with null character)
+05      XX          file name (end with null character)
 
 Remainder is file data
 
@@ -90,8 +90,8 @@ Remainder is file data
 
 ### File Data Cluster
 
-Start LenNibbles Contents
+Start   LenNibbles  Contents
 
-00 01 cluster type
+00      01          cluster type
 
-01 02 Next pointer to file data cluster extension
+01      02          Next pointer to file data cluster extension
