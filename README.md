@@ -29,6 +29,10 @@ Your program should also detect the following command line parameters:
 
 -h or -H or -? :: print a usage/help message
 
+Add a method to your program shell that will print the contents of a file. This is the same as the type command in DOS and the cat command in unix/linux.
+
+%shell -type fred -f IUS.dat
+
 ## Notes
 
 1\. This is a flat file system, single directory, 32 lines of 32 bytes (64 nibbles).

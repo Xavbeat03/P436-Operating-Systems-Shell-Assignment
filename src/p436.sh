@@ -513,6 +513,132 @@ function interpret_file_system(){
 
 }
 
+# Interprets the printed file system from the disk image
+function interpret_file_system_read_file(){
+    local file=$1
+    local internal_disk_file=$2
+    local address=0 # Address of the current line
+    local line_num=0 # Line number of the current line
+    local final_value_length=4 # Each stored character is at most 4 characters long in the passed file system
+
+    while IFS= read -r line; do
+
+        if (( line_num < 2 )); then
+            line_num=$((line_num+1))
+            continue
+        fi
+        
+        local short_line # Shortened line for interpretation
+        short_line="${line:3}" # Get the substring of the line from the 3rd character
+        local doContinue=false # Continue flag
+        
+        for (( i=0; i<${#short_line}; i+=final_value_length )); do
+            local section_num=$((i / final_value_length))
+            local section="${short_line:$i:$final_value_length}" # Grabs the a section of the string, representing a character
+            local important_headers=("NUL " "ETX " "EOT ")
+
+            # Check the first value of the section (The first character)
+            if [ "$section_num" -eq 0 ]; then
+                # Check if the section is not an important header (NUL, ETX, EOT)
+                if [[ ! " ${important_headers[*]} " =~ ${section} ]]; then
+                    doContinue=true # Continue flag
+                    break
+                fi
+            fi
+            
+        done
+
+        if [ "$doContinue" == true ]; then
+            continue
+        fi
+
+        if (( line_num >= 2 )); then
+            printf "%s\n" "$short_line"
+        fi
+
+
+        line_num=$((line_num+1))
+    done < "$file" > "./temp/interpreted_file_system.txt" # Write the interpreted file system to a temporary file
+
+    # Print the interpreted file system
+
+    local last_line
+    last_line=$(tail -n 1 "./temp/interpreted_file_system.txt")
+    local line_num=0
+
+    printf "\nInterpreted File System:\n\n"
+    while IFS= read -r line; do
+        local first_char="${line:0:4}" # Get the first character of the line
+        local word
+        local temp_word_file_path="./temp/word"
+        local is_last_line
+        
+        # Check if the line is the last line
+        if [ "$line" == "$last_line" ]; then
+            is_last_line=true
+        else
+            is_last_line=false
+        fi
+        
+        case $first_char in
+            "NUL ") # Directory
+                continue
+
+                ;;
+            "ETX ") # File
+                local j=20
+                for (( i=20; i<${#line}; i+=4 )); do
+                    (( j += 4 )) # Increment j by 4
+                    if [[ "${line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+                        break
+                    fi
+                    printf "%s " "${line:$i:4}"
+                done > "$temp_word_file_path"
+                word=$(< "$temp_word_file_path")
+
+                (( j += 4 )) # Increment j by 4
+                
+                # Word without spaces
+                word="${word// /}"
+
+                if [ "$word" == "$internal_disk_file" ]; then
+                    printf "Found file: %s\n" "$word"
+
+                    # Get the file data
+                    local file_data=""
+                    for (( k=j; k<${#line}; k+=4 )); do
+                        if [[ "${line:$k:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+                            break
+                        fi
+                        if [[ "${line:$k:4}" == "SP" ]]; then # Check if the value is SP, if so break
+                            file_data+=" "
+                            continue  
+                        fi
+                        file_data+="${line:$k:4}"
+                    done
+
+
+
+
+
+                    break
+                fi
+                
+                rm "$temp_word_file_path"
+
+                ;;
+        esac
+        
+
+        (( line_num++ ))
+
+    done < "./temp/interpreted_file_system.txt"
+
+    # Remove the interpreted file system temporary file
+    rm "./temp/interpreted_file_system.txt"
+
+}
+
 # Function to create a blank disk, takes 3 arguments: disk name, sector count, and cluster size
 function create_blank_disk(){
     # Get the arguments
@@ -829,8 +955,35 @@ main(){
                     ;;
             esac
             ;;
+        4) 
+            case "$1" in
+                -type)
+                    internal_disk_file=$2
+                    case "$3" in
+                        -f) # File path specified
+                            
+                            file=$4 # File path
+                            file_check
+                            malformed_check
+                            
+                            interpret_file_system_read_file < "$file" "$internal_disk_file"
+                            ;;
+                        *)
+                            printf "Invalid option.\n"
+                            exit_and_clean
+                            ;;
+                    esac
+                    ;;
+
+                *) # Invalid option
+                    printf "Invalid option.\n"
+                    exit_and_clean
+                    ;;
+            esac
+            ;;
         *) # More than one argument
             printf "Too many arguments.\n"
+            printf "%d arguments provided.\n" $#
             exit_and_clean
             ;;
     esac
