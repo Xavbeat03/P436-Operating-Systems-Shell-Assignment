@@ -757,6 +757,7 @@ function help(){
     printf "  -dir -f <file_path>: Interpret the file system\n"
     printf "  <disk_name> <sector_count> <cluster_size>: Create a new blank disk at <disk_name>.txt\n"
     printf "  -type/-cat <internal_file_name> -f <file_path>: Read the file from the disk image\n"
+    printf "  -f <file_path> -du/--disk-usage: Analyze disk usage\n"
 }
 
 # Function to display version
@@ -780,6 +781,66 @@ function file_check(){
             exit_and_clean
             ;;
     esac
+}
+
+# Function to analyze disk usage
+function analyze_disk_usage(){
+    local used_clusters="0"
+    local free_clusters="0"
+    local bad_clusters="0"
+    local total_clusters="0"
+    local total_used_clusters="0"
+
+    local line_num=0
+
+    while IFS= read -r line; do
+        # Get the first two characters of the line
+        first_two="${line:0:2}"
+        first_data="${line:3:4}"
+
+        if [[ line_num -lt 2 ]]; then
+            line_num=$((line_num+1))
+            continue
+        fi
+        # Check if the first two characters are empty
+        if [[ "$first_two" == "" ]]; then
+            # Skip the line and continue with the next iteration
+            break
+        fi
+
+        if [ "$first_data" == "ETX " ] || [ "$first_data" == "EOT " ]; then
+            used_clusters=$((used_clusters+1))
+        elif [ "$first_data" == "SOH " ]; then
+            free_clusters=$((free_clusters+1))
+        elif [ "$first_data" == "STX " ]; then
+            bad_clusters=$((bad_clusters+1))
+        elif [ "$first_data" == "NUL " ]; then
+            used_clusters=$((used_clusters+1))
+        fi
+
+        printf "%s\n" "$first_data"
+
+        # Check if line blank
+        if [ "$first_data" == "" ]; then
+            break
+        fi
+        total_clusters=$((total_clusters+1))
+        line_num=$((line_num+1))
+    done
+
+    total_used_clusters=$((used_clusters+bad_clusters))
+
+    printf "State       Count       Percentage\n"
+    printf "Used         %d           %d%%\n" "$used_clusters" "$(( (used_clusters * 100) / total_clusters ))"
+    printf "Avail        %d          %d%%\n" "$free_clusters" "$(( (free_clusters * 100) / total_clusters ))"
+    printf "Bad          %d           %d%%\n" "$bad_clusters" "$(( (bad_clusters * 100) / total_clusters ))"
+    printf "Total number of clusters: %d\n" "$total_clusters"
+    printf "Total number of used clusters: %d\n" "$total_used_clusters"
+
+    if [ $free_clusters -eq 0 ]; then
+        printf "***Disk full***\n"
+    fi
+
 }
 
 # Interprets the file and prints out the internal directory of the formatted disk
@@ -815,6 +876,25 @@ function read_file(){
 
     # Arguments: interpreted file, file to read from disk
     interpret_file_system_read_file "$f" "$1"
+
+    # Remove temporary file
+    rm "./temp/interpreted_file.txt"
+    rmdir "./temp"
+
+}
+
+function disk_usage(){
+    printf "Disk Usage:\n"
+    local f # Interpreted File output for reading
+    # Create a temporary directory and file
+    mkdir "./temp"
+    interpret_file < "$file" > "./temp/interpreted_file.txt"
+
+    # Work on the interpreted file
+
+    f="./temp/interpreted_file.txt"
+
+    analyze_disk_usage < "$f"
 
     # Remove temporary file
     rm "./temp/interpreted_file.txt"
@@ -950,6 +1030,21 @@ main(){
                             ;;
                         *) # File path not specified
                             printf "File path not specified.\n"
+                            ;;
+                    esac
+                    ;;
+                -f|--file) # File path specified
+                    case "$3" in
+                        -du|--disk-usage) # Analyzes and returns the disk usage
+                            file=$2 # File path
+                            file_check
+                            malformed_check
+
+                            disk_usage
+                            ;;
+                        *) # Invalid option
+                            printf "Invalid option.\n"
+                            exit_and_clean
                             ;;
                     esac
                     ;;
