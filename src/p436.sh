@@ -11,19 +11,20 @@ function print_header() {
 }
 
 # Function to format and print the interpreted line with hex addressing
-function format_and_print_line() {
-    local address=$1
-    local interpreted_line=$2
+# Function to format and print the interpreted line with hex addressing
+# function format_and_print_line() {
+#     local address=$1
+#     local interpreted_line=$2
 
-    # Print the address
-    printf "%s: " "$address"
+#     # Print the address
+#     printf "%s: " "$address"
 
-    # Print each character with spaces in between
-    for (( i = 0; i < ${#interpreted_line}; i++ )); do
-        printf "%-2s" "${interpreted_line:i:1}"
-    done
-    echo
-}
+#     # Print each character with spaces in between
+#     for (( i = 0; i < ${#interpreted_line}; i++ )); do
+#         printf "%-2s" "${interpreted_line:i:1}"
+#     done
+#     echo
+# }
 
 
 # Function to create the hex to ASCII dictionary
@@ -179,120 +180,120 @@ function create_hex_to_ascii_dict(){
 }
 
 # Function to create the ASCII to hex dictionary
-function create_ascii_to_hex_dict_worker(){
-    printf " : 20\n"
-    printf "!: 21\n"
-    printf "\": 22\n"
-    printf "#: 23\n"
-    printf "$: 24\n"
-    printf "%%: 25\n"
-    printf "&: 26\n"
-    printf "\': 27\n"
-    printf "(: 28\n"
-    printf "): 29\n"
-    printf "*: 2A\n"
-    printf "+: 2B\n"
-    printf ",: 2C\n"
-    printf "\-: 2D\n"
-    printf ".: 2E\n"
-    printf "/: 2F\n"
-    printf "0: 30\n"
-    printf "1: 31\n"
-    printf "2: 32\n"
-    printf "3: 33\n"
-    printf "4: 34\n"
-    printf "5: 35\n"
-    printf "6: 36\n"
-    printf "7: 37\n"
-    printf "8: 38\n"
-    printf "9: 39\n"
-    printf ":: 3A\n"
-    printf ";: 3B\n"
-    printf "<: 3C\n"
-    printf "=: 3D\n"
-    printf ">: 3E\n"
-    printf "?: 3F\n"
-    printf "@: 40\n"
-    printf "A: 41\n"
-    printf "B: 42\n"
-    printf "C: 43\n"
-    printf "D: 44\n"
-    printf "E: 45\n"
-    printf "F: 46\n"
-    printf "G: 47\n"
-    printf "H: 48\n"
-    printf "I: 49\n"
-    printf "J: 4A\n"
-    printf "K: 4B\n"
-    printf "L: 4C\n"
-    printf "M: 4D\n"
-    printf "N: 4E\n"
-    printf "O: 4F\n"
-    printf "P: 50\n"
-    printf "Q: 51\n"
-    printf "R: 52\n"
-    printf "S: 53\n"
-    printf "T: 54\n"
-    printf "U: 55\n"
-    printf "V: 56\n"
-    printf "W: 57\n"
-    printf "X: 58\n"
-    printf "Y: 59\n"
-    printf "Z: 5A\n"
-    printf "[: 5B\n"
-    printf "\: 5C\n"
-    printf "]: 5D\n"
-    printf "^: 5E\n"
-    printf "_: 5F\n"
-    printf "\`: 60\n"
-    printf "a: 61\n"
-    printf "b: 62\n"
-    printf "c: 63\n"
-    printf "d: 64\n"
-    printf "e: 65\n"
-    printf "f: 66\n"
-    printf "g: 67\n"
-    printf "h: 68\n"
-    printf "i: 69\n"
-    printf "j: 6A\n"
-    printf "k: 6B\n"
-    printf "l: 6C\n"
-    printf "m: 6D\n"
-    printf "n: 6E\n"
-    printf "o: 6F\n"
-    printf "p: 70\n"
-    printf "q: 71\n"
-    printf "r: 72\n"
-    printf "s: 73\n"
-    printf "t: 74\n"
-    printf "u: 75\n"
-    printf "v: 76\n"
-    printf "w: 77\n"
-    printf "x: 78\n"
-    printf "y: 79\n"
-    printf "z: 7A\n"
-    printf "{: 7B\n"
-    printf "|: 7C\n"
-    printf "}: 7D\n"
-    printf "~: 7E\n"
-    
-}
+# Function to create the ASCII to hex dictionary
+# function create_ascii_to_hex_dict_worker(){
+#     printf " : 20\n"
+#     printf "!: 21\n"
+#     printf "\": 22\n"
+#     printf "#: 23\n"
+#     printf "$: 24\n"
+#     printf "%%: 25\n"
+#     printf "&: 26\n"
+#     printf "\': 27\n"
+#     printf "(: 28\n"
+#     printf "): 29\n"
+#     printf "*: 2A\n"
+#     printf "+: 2B\n"
+#     printf ",: 2C\n"
+#     printf "\-: 2D\n"
+#     printf ".: 2E\n"
+#     printf "/: 2F\n"
+#     printf "0: 30\n"
+#     printf "1: 31\n"
+#     printf "2: 32\n"
+#     printf "3: 33\n"
+#     printf "4: 34\n"
+#     printf "5: 35\n"
+#     printf "6: 36\n"
+#     printf "7: 37\n"
+#     printf "8: 38\n"
+#     printf "9: 39\n"
+#     printf ":: 3A\n"
+#     printf ";: 3B\n"
+#     printf "<: 3C\n"
+#     printf "=: 3D\n"
+#     printf ">: 3E\n"
+#     printf "?: 3F\n"
+#     printf "@: 40\n"
+#     printf "A: 41\n"
+#     printf "B: 42\n"
+#     printf "C: 43\n"
+#     printf "D: 44\n"
+#     printf "E: 45\n"
+#     printf "F: 46\n"
+#     printf "G: 47\n"
+#     printf "H: 48\n"
+#     printf "I: 49\n"
+#     printf "J: 4A\n"
+#     printf "K: 4B\n"
+#     printf "L: 4C\n"
+#     printf "M: 4D\n"
+#     printf "N: 4E\n"
+#     printf "O: 4F\n"
+#     printf "P: 50\n"
+#     printf "Q: 51\n"
+#     printf "R: 52\n"
+#     printf "S: 53\n"
+#     printf "T: 54\n"
+#     printf "U: 55\n"
+#     printf "V: 56\n"
+#     printf "W: 57\n"
+#     printf "X: 58\n"
+#     printf "Y: 59\n"
+#     printf "Z: 5A\n"
+#     printf "[: 5B\n"
+#     printf "\: 5C\n"
+#     printf "]: 5D\n"
+#     printf "^: 5E\n"
+#     printf "_: 5F\n"
+#     printf "\`: 60\n"
+#     printf "a: 61\n"
+#     printf "b: 62\n"
+#     printf "c: 63\n"
+#     printf "d: 64\n"
+#     printf "e: 65\n"
+#     printf "f: 66\n"
+#     printf "g: 67\n"
+#     printf "h: 68\n"
+#     printf "i: 69\n"
+#     printf "j: 6A\n"
+#     printf "k: 6B\n"
+#     printf "l: 6C\n"
+#     printf "m: 6D\n"
+#     printf "n: 6E\n"
+#     printf "o: 6F\n"
+#     printf "p: 70\n"
+#     printf "q: 71\n"
+#     printf "r: 72\n"
+#     printf "s: 73\n"
+#     printf "t: 74\n"
+#     printf "u: 75\n"
+#     printf "v: 76\n"
+#     printf "w: 77\n"
+#     printf "x: 78\n"
+#     printf "y: 79\n"
+#     printf "z: 7A\n"
+#     printf "{: 7B\n"
+#     printf "|: 7C\n"
+#     printf "}: 7D\n"
+#     printf "~: 7E\n"
+# }
 
 # Function to create the ASCII to hex dictionary
-function create_ascii_to_hex_dict() {
-    # Check if the assets directory exists
-    if [ ! -d "assets" ]; then
-        mkdir -p assets
-    fi
+# function create_ascii_to_hex_dict() {
+#     # Check if the assets directory exists
+#     if [ ! -d "assets" ]; then
+#         mkdir -p assets
+#     fi
 
-    if [ -f "assets/ASCII_To_Hex_Dict.txt" ]; then
-        rm "assets/ASCII_To_Hex_Dict.txt"
-    fi
+#     if [ -f "assets/ASCII_To_Hex_Dict.txt" ]; then
+#         rm "assets/ASCII_To_Hex_Dict.txt"
+#     fi
 
-    # Create the ASCII to hex dictionary file
-    create_ascii_to_hex_dict_worker > assets/ASCII_To_Hex_Dict.txt
+#     # Create the ASCII to hex dictionary file
+#     create_ascii_to_hex_dict_worker > assets/ASCII_To_Hex_Dict.txt
 
-}
+# }
 
 # Convert a hex string to ASCII
 function hex_to_ascii_func() {
@@ -514,129 +515,115 @@ function interpret_file_system(){
 }
 
 # Interprets the printed file system from the disk image
+# Uses the file local variable and takes 1 argument
 function interpret_file_system_read_file(){
-    local file=$1
-    local internal_disk_file=$2
+    local char_length=4 # Each stored character is at most 4 characters long in the passed file system
+    local file=$1 # Interpreted file system
+    local file_to_read=$2 # File to read from the disk image
+    local file_to_read_line_num="null" # Line number of the file to read
+    local file_to_read_key="null" # Key of the file to read
+
     local address=0 # Address of the current line
     local line_num=0 # Line number of the current line
-    local final_value_length=4 # Each stored character is at most 4 characters long in the passed file system
 
+    # Create an associative array for our dictionary
+    declare -A disk_dict
+
+    # Read the file line by line
     while IFS= read -r line; do
-
+        # Skip header rows
         if (( line_num < 2 )); then
             line_num=$((line_num+1))
             continue
         fi
         
-        local short_line # Shortened line for interpretation
-        short_line="${line:3}" # Get the substring of the line from the 3rd character
-        local doContinue=false # Continue flag
+        # Extract key (first 2 characters)
+        local key="${line:0:2}"
         
-        for (( i=0; i<${#short_line}; i+=final_value_length )); do
-            local section_num=$((i / final_value_length))
-            local section="${short_line:$i:$final_value_length}" # Grabs the a section of the string, representing a character
-            local important_headers=("NUL " "ETX " "EOT ")
+        # Create and load the hex to ASCII dictionary
+        declare -A hex_to_ascii_dict
+        create_hex_to_ascii_dict
+        
+        # Load the hex to ASCII dictionary
+        while IFS=": " read -r hex ascii; do
+            hex_to_ascii_dict["$hex"]="$ascii"
+        done < "assets/Hex_To_ASCII_Dict.txt"
+        
+        # Convert key from hex to ASCII
+        key="${hex_to_ascii_dict["$key"]}"
+        
+        # Extract value (everything after the 2nd character)
+        local value="${line:3}"
+        
+        # Add to dictionary
+        disk_dict["$key"]="$value"
+        
+        # Stores the file name on that line
+        local disk_file_name=""
 
-            # Check the first value of the section (The first character)
-            if [ "$section_num" -eq 0 ]; then
-                # Check if the section is not an important header (NUL, ETX, EOT)
-                if [[ ! " ${important_headers[*]} " =~ ${section} ]]; then
-                    doContinue=true # Continue flag
+        # iterate through the line and determine the file name via splicing
+        if [ "${line:3:4}" == "ETX " ]; then 
+            for (( i=23; i<${#line}; i+=4 )); do
+                if [[ "${line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
                     break
                 fi
+                if [[ "${line:$i:4}" == "SP  " ]]; then # Value is representative of a space
+                    disk_file_name+=" "
+                    
+                else # Value is not a space
+                    local char="${line:$i:4}"
+                    disk_file_name+="${char// /}" # Remove spaces
+                fi
+            done
+
+        fi
+
+        if [ "$disk_file_name" == "$file_to_read" ]; then
+            file_to_read_line_num=$line_num
+            file_to_read_key=$key
+        fi
+
+        
+        # Increment line number
+        line_num=$((line_num+1))
+    done < "$file"
+
+    # Now search for the file to read
+    printf "Looking for file %s in the disk image\n" "$file_to_read"
+
+    # Process the dictionary to find and read the file
+    # TODO: Implement file reading logic using disk_dict
+
+     # Pointer to the next file
+
+    # Check if the file to read was found
+    if [ "$file_to_read_line_num" == "null" ]; then
+        printf "File not found in the disk image.\n"
+    else # File was found
+        printf "File found in the disk image.\n"
+        printf "Reading file...\n"
+
+        local file_to_read_line=${disk_dict["$file_to_read_key"]} # Read the file from the dictionary
+        local file_name_length=${#file_to_read}
+
+        local next_file_pointer="${file_to_read_line:12:4}" # Pointer to the next file
+        local file_contents="" # Contents of the file
+
+        for (( i=(23+(file_name_length*8)+5); i<${#file_to_read_line}; i+=4 )); do
+            if [[ "${file_to_read_line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+                break
             fi
-            
+            local character="${file_to_read_line:$i:4}"
+            file_contents+="${character// /}" # Remove spaces
         done
 
-        if [ "$doContinue" == true ]; then
-            continue
-        fi
-
-        if (( line_num >= 2 )); then
-            printf "%s\n" "$short_line"
-        fi
-
-
-        line_num=$((line_num+1))
-    done < "$file" > "./temp/interpreted_file_system.txt" # Write the interpreted file system to a temporary file
-
-    # Print the interpreted file system
-
-    local last_line
-    last_line=$(tail -n 1 "./temp/interpreted_file_system.txt")
-    local line_num=0
-
-    printf "\nInterpreted File System:\n\n"
-    while IFS= read -r line; do
-        local first_char="${line:0:4}" # Get the first character of the line
-        local word
-        local temp_word_file_path="./temp/word"
-        local is_last_line
-        
-        # Check if the line is the last line
-        if [ "$line" == "$last_line" ]; then
-            is_last_line=true
+        if [ "$next_file_pointer" == "NUL " ]; then
+            printf "File contents: %s\n" "$file_contents"
         else
-            is_last_line=false
+            printf ""
         fi
-        
-        case $first_char in
-            "NUL ") # Directory
-                continue
 
-                ;;
-            "ETX ") # File
-                local j=20
-                for (( i=20; i<${#line}; i+=4 )); do
-                    (( j += 4 )) # Increment j by 4
-                    if [[ "${line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
-                        break
-                    fi
-                    printf "%s " "${line:$i:4}"
-                done > "$temp_word_file_path"
-                word=$(< "$temp_word_file_path")
-
-                (( j += 4 )) # Increment j by 4
-                
-                # Word without spaces
-                word="${word// /}"
-
-                if [ "$word" == "$internal_disk_file" ]; then
-                    printf "Found file: %s\n" "$word"
-
-                    # Get the file data
-                    local file_data=""
-                    for (( k=j; k<${#line}; k+=4 )); do
-                        if [[ "${line:$k:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
-                            break
-                        fi
-                        if [[ "${line:$k:4}" == "SP" ]]; then # Check if the value is SP, if so break
-                            file_data+=" "
-                            continue  
-                        fi
-                        file_data+="${line:$k:4}"
-                    done
-
-
-
-
-
-                    break
-                fi
-                
-                rm "$temp_word_file_path"
-
-                ;;
-        esac
-        
-
-        (( line_num++ ))
-
-    done < "./temp/interpreted_file_system.txt"
-
-    # Remove the interpreted file system temporary file
-    rm "./temp/interpreted_file_system.txt"
-
+    fi
 }
 
 # Function to create a blank disk, takes 3 arguments: disk name, sector count, and cluster size
@@ -739,6 +726,7 @@ function help(){
     printf "  -f <file_path>, --file <file_path>: Specify the file path\n"
     printf "  -dir -f <file_path>: Interpret the file system\n"
     printf "  <disk_name> <sector_count> <cluster_size>: Create a new blank disk at <disk_name>.txt\n"
+    printf "  -type/-cat <internal_file_name> -f <file_path>: Read the file from the disk image\n"
 }
 
 # Function to display version
@@ -783,6 +771,27 @@ function directory(){
     
 }
 
+# Interprets the file and prints out the internal value of the file on the formatted disk
+function read_file(){
+    printf "Reading the file...\n"
+    local f # Interpreted File output for reading
+    # Create a temporary directory and file
+    mkdir "./temp"
+    interpret_file < "$file" > "./temp/interpreted_file.txt"
+
+    # Work on the interpreted file
+    f="./temp/interpreted_file.txt"
+
+
+    # Arguments: interpreted file, file to read from disk
+    interpret_file_system_read_file "$f" "$1"
+
+    # Remove temporary file
+    rm "./temp/interpreted_file.txt"
+    rmdir "./temp"
+
+}
+
 # Checks if the disk file is malformed
 function malformed_check(){
     local i=0
@@ -810,9 +819,13 @@ function malformed_check(){
 
         # TODO: Need to change to checking if its modulus 16 equals 0
         # Check if the line is not 64 characters long
-        if [ $((  #line % 16  )) -ne 0 ] && [ $i != 0 ]; then
+        local line_length=${#line}
+        line_length=$((line_length - 3))
+
+        if [ $((  line_length % 16  )) -ne 0 ] && [ $i != 0 ]; then
             printf "Malformed disk file.\n"
             printf "Line %d is not a multiple of 16( >0 ) characters long.\n" "$i"
+            printf "Line: %s\n" "$line"
             exit_and_clean
         fi
 
@@ -944,10 +957,6 @@ main(){
                             printf "Invalid option.\n"
                             exit_and_clean
                         fi
-
-
-
-                        exit_and_clean
                     else
                         printf "Invalid option.\n"
                         exit_and_clean
@@ -957,16 +966,18 @@ main(){
             ;;
         4) 
             case "$1" in
-                -type)
+                -type|-cat)
                     internal_disk_file=$2
                     case "$3" in
                         -f) # File path specified
                             
                             file=$4 # File path
-                            file_check
+                            file_check 
                             malformed_check
                             
-                            interpret_file_system_read_file < "$file" "$internal_disk_file"
+                            read_file "$internal_disk_file"
+
+                            exit_and_clean
                             ;;
                         *)
                             printf "Invalid option.\n"
