@@ -610,8 +610,12 @@ function interpret_file_system_read_file(){
         local file_contents="" # Contents of the file
 
         for (( i=(23+(file_name_length*8)+5); i<${#file_to_read_line}; i+=4 )); do
-            if [[ "${file_to_read_line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+            if [[ "${file_to_read_line:$i:4}" == "NUL " ]] || [[ "${file_to_read_line:$i:4}" == "NUL" ]]; then # Check if the value is NUL, if so break
                 break
+            fi
+            if [[ "${file_to_read_line:$i:4}" == "SP  " ]]; then # Value is representative of a space
+                file_contents+=" "
+                continue
             fi
             local character="${file_to_read_line:$i:4}"
             file_contents+="${character// /}" # Remove spaces
@@ -620,7 +624,33 @@ function interpret_file_system_read_file(){
         if [ "$next_file_pointer" == "NUL " ]; then
             printf "File contents: %s\n" "$file_contents"
         else
-            printf ""
+            # Remove spaces from next_file_pointer
+            next_file_pointer="${next_file_pointer// /}"
+
+            while [ "$next_file_pointer" != "NUL" ]; do
+                next_file_line="${disk_dict["$next_file_pointer"]}"
+                
+                next_file_pointer="${next_file_line:4:4}" # Pointer to the next file
+                # Remove spaces from next_file_pointer
+                next_file_pointer="${next_file_pointer// /}"
+                
+                next_file_contents="" # Contents of the next file
+
+                for (( i=12; i<${#next_file_line}; i+=4 )); do
+                    if [[ "${next_file_line:$i:4}" == "NUL " ]]; then # Check if the value is NUL, if so break
+                        break
+                    fi
+                    if [[ "${next_file_line:$i:4}" == "SP  " ]]; then # Value is representative of a space
+                        next_file_contents+=" "
+                        continue
+                    fi
+                    local character="${next_file_line:$i:4}"
+                    next_file_contents+="${character// /}" # Remove spaces
+                done
+
+                file_contents+="$next_file_contents" # Append the next file contents to the file contents
+            done
+            printf "File contents: %s\n" "$file_contents"
         fi
 
     fi
