@@ -1117,7 +1117,7 @@ main(){
                     ;;
             esac
             ;;
-        *) # More than one argument
+        *) # More then allowed arguments
             printf "Too many arguments.\n"
             printf "%d arguments provided.\n" $#
             exit_and_clean
