@@ -696,14 +696,7 @@ function create_blank_disk(){
     # Create the disk
 
     # Add constant disk data for the first sector
-    printf "00:0010000"
-    
-
-    # Disk name exceeds reasonable length and goes over the cluster size
-    if [ ${#disk_name} -gt $(( cluster_size - 10 )) ]; then
-        printf " Disk name too long\n" >> stdout
-        exit_and_clean
-    fi
+    printf "00:001000"
 
     local disk_name_length=${#disk_name}
 
@@ -818,8 +811,6 @@ function analyze_disk_usage(){
         elif [ "$first_data" == "NUL " ]; then
             used_clusters=$((used_clusters+1))
         fi
-
-        printf "%s\n" "$first_data"
 
         # Check if line blank
         if [ "$first_data" == "" ]; then
@@ -1058,9 +1049,9 @@ main(){
                         if [[ "$2" =~ ^[0-9]+$ ]] && [[ "$3" =~ ^[0-9]+$ ]]; then
                             printf "Creating a new blank disk...\n"
 
-                            # Check that sector count is a multiple of 16
-                            if [ "$2" -eq 0 ] || [ $(( $2 % 16 )) -ne 0 ]; then
-                                printf "sector count must be a multiple of 16.\n"
+                            # Check that sector count is a multiple of 8
+                            if [ "$2" -eq 0 ] || [ $(( $2 % 8 )) -ne 0 ]; then
+                                printf "sector count must be a multiple of 8.\n"
                                 exit_and_clean
                             fi
                             
@@ -1074,11 +1065,24 @@ main(){
                             printf "Disk name: %s\n" "$1"
                             printf "Sector Count: %s\n" "$2"
                             printf "Cluster size: %s\n" "$3"
+                            disk_name="$1"
+                            sector_count="$2"
+                            cluster_size="$3"
 
-                            # Create the new blank disk
-                            create_blank_disk "$1" "$2" "$3" >> "$1.txt"
+                            disk_name_length=${#disk_name}
+                            space_left=$(( (cluster_size - 6) / 2 )) # Space left for the disk name
 
-                            exit_and_clean
+                            # Disk name exceeds reasonable length and goes over the cluster size
+                            if [ $disk_name_length -gt $space_left ]; then
+                                printf "Disk name too long, exiting.\n"
+                                exit_and_clean
+                            else 
+                                # Create the new blank disk
+                                create_blank_disk "$disk_name" "$sector_count" "$cluster_size" > "$disk_name.txt"
+
+                                exit_and_clean
+                            fi
+
                         else
                             printf "Invalid option.\n"
                             exit_and_clean
