@@ -758,6 +758,7 @@ function help(){
     printf "  <disk_name> <sector_count> <cluster_size>: Create a new blank disk at <disk_name>.txt\n"
     printf "  -type/-cat <internal_file_name> -f <file_path>: Read the file from the disk image\n"
     printf "  -f <file_path> -du/--disk-usage: Analyze disk usage\n"
+    printf "  --interpret-and-print <file_path>: Interpret the disk file and print it out in readable text.\n"
 }
 
 # Function to display version
