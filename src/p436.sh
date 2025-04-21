@@ -954,7 +954,7 @@ function exit_and_clean(){
 
 # Variables
 
-version="1"
+version="4"
 
 # Check if the input is from a pipe
 if [ ! -t 0 ]; then
